@@ -100,6 +100,9 @@ spec:
           {{- if .Values.prometheusEnabled }}
           - --prometheus-enabled
           {{- end }}
+          {{- if .Values.systemdEnabled }}
+          - --systemd-enabled
+          {{- end }}
           {{- if and (eq .Values.datasource "multimap") .Values.labelSelector.matchLabels }}
           - --label-selector={{- range $k, $v := .Values.labelSelector.matchLabels }}{{$k}}={{$v}},
           {{- end }}
