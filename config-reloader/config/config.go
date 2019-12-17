@@ -9,9 +9,10 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
-	"github.com/vmware/kube-fluentd-operator/config-reloader/util"
+
 	"github.com/alecthomas/kingpin"
 	"github.com/sirupsen/logrus"
+	"github.com/vmware/kube-fluentd-operator/config-reloader/util"
 	"k8s.io/apimachinery/pkg/labels"
 )
 
@@ -43,6 +44,7 @@ type Config struct {
 	KubeletRoot            string
 	Namespaces             []string
 	PrometheusEnabled      bool
+	SystemdEnabled         bool
 	// parsed or processed/cached fields
 	level               logrus.Level
 	ParsedMetaValues    map[string]string
@@ -64,6 +66,7 @@ var defaultConfig = &Config{
 	IntervalSeconds:      60,
 	ID:                   "default",
 	PrometheusEnabled:    false,
+	SystemdEnabled:       false,
 }
 
 var reValidID = regexp.MustCompile("([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9]")
@@ -200,6 +203,7 @@ func (cfg *Config) ParseFlags(args []string) error {
 	app.Flag("status-annotation", "Store configuration errors in this annotation, leave empty to turn off").Default(defaultConfig.AnnotStatus).StringVar(&cfg.AnnotStatus)
 
 	app.Flag("prometheus-enabled", "Prometheus metrics enabled (default: false)").BoolVar(&cfg.PrometheusEnabled)
+	app.Flag("systemd-enabled", "Collect logs from systemD (default: false)").BoolVar(&cfg.SystemdEnabled)
 
 	app.Flag("kubelet-root", "Kubelet root dir, configured using --root-dir on the kubelet service").Default(defaultConfig.KubeletRoot).StringVar(&cfg.KubeletRoot)
 	app.Flag("namespaces", "List of namespaces to process. If empty, processes all namespaces").StringsVar(&cfg.Namespaces)
