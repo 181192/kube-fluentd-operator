@@ -21,8 +21,7 @@ test:
 	go test -v ./...
 
 dep:
-	which dep > /dev/null || (echo "Install dep first: go get -u github.com/golang/dep/cmd/dep" && exit 1)
-	dep ensure
+	go mod download
 
 guess-tag:
 	@echo "TAG=`git describe --tags --always`"
