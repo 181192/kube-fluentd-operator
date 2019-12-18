@@ -45,29 +45,29 @@ func (p *rewriteLabelsState) Process(input fluentd.Fragment) (fluentd.Fragment, 
 		return nil
 	}
 
-	rewriteLabelTag := func(d *fluentd.Directive, ctx *ProcessorContext) error {
-		if d.Name != "label" {
-			return nil
-		}
+	// rewriteLabelTag := func(d *fluentd.Directive, ctx *ProcessorContext) error {
+	// 	if d.Name != "label" {
+	// 		return nil
+	// 	}
 
-		labelName := d.Tag
-		if !strings.HasPrefix(labelName, "@") {
-			return fmt.Errorf("bad label name %s for <label>, must start with @", labelName)
-		}
+	// 	labelName := d.Tag
+	// 	if !strings.HasPrefix(labelName, "@") {
+	// 		return fmt.Errorf("bad label name %s for <label>, must start with @", labelName)
+	// 	}
 
-		d.Tag = normalizeLabelName(ctx, labelName)
-		return nil
-	}
+	// 	d.Tag = normalizeLabelName(ctx, labelName)
+	// 	return nil
+	// }
 
 	err := applyRecursivelyInPlace(input, p.Context, normalizeAllLabels)
 	if err != nil {
 		return nil, err
 	}
 
-	err = applyRecursivelyInPlace(input, p.Context, rewriteLabelTag)
-	if err != nil {
-		return nil, err
-	}
+	// err = applyRecursivelyInPlace(input, p.Context, rewriteLabelTag)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
 	return input, nil
 }
