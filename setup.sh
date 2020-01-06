@@ -71,6 +71,7 @@ cat > .tmp/fluent.conf << EOF
   label_keys \$.kubernetes.host
   <label>
     container \$.kubernetes.container_name
+    namespace \$.kubernetes.namespace_name
     pod \$.kubernetes.pod_name
     host \$.kubernetes.host
   </label>
