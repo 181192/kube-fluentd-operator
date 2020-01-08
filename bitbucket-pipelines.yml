@@ -1,0 +1,31 @@
+image:
+  name: stacc.azurecr.io/sail/az-kube-helm:latest
+  username: $AZURE_CLIENT_ID
+  password: $AZURE_SECRET
+pipelines:
+  branches:
+    master:
+      - step:
+          name: Build config-reloader
+          services:
+            - docker
+          script:
+            - export ACR_URL=stacc.azurecr.io
+            - export ARTIFACT_NAME=sail/kube-fluentd-operator
+            - export BASE_VERSION=1.0
+            - export IMAGE=$ACR_URL/$ARTIFACT_NAME
+            - export TAG=$BASE_VERSION.$BITBUCKET_BUILD_NUMBER
+
+            - cd base-image && make build-image
+            - docker login --username $AZURE_CLIENT_ID --password $AZURE_SECRET $ACR_URL
+            - cd ../config-reloader && make build-image IMAGE=$IMAGE TAG=$TAG VERSION=$TAG
+            - docker push $IMAGE:$TAG
+      - step:
+          name: Push Helm chart
+          script:
+            - helm init -c
+            - az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_SECRET --tenant 7a014d5a-2306-45a7-aca7-bf0288e80188
+            - az acr login --username $AZURE_CLIENT_ID --password $AZURE_SECRET -n stacc
+            - az acr helm repo add -n stacc
+            - cd ../log-router && make helm-package
+            - az acr helm push -n stacc *.tgz --verbose
