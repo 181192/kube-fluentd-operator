@@ -7,8 +7,6 @@ pipelines:
     master:
       - step:
           name: Build config-reloader
-          services:
-            - docker
           script:
             - cd base-image && make build-image
 
@@ -29,3 +27,6 @@ pipelines:
             - az acr helm repo add -n stacc
             - cd ../log-router && make helm-package
             - az acr helm push -n stacc *.tgz --verbose
+
+options:
+  docker: true
