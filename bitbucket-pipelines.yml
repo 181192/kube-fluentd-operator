@@ -10,13 +10,13 @@ pipelines:
           services:
             - docker
           script:
+            - cd base-image && make build-image
+
             - export ACR_URL=stacc.azurecr.io
             - export ARTIFACT_NAME=sail/kube-fluentd-operator
             - export BASE_VERSION=1.0
             - export IMAGE=$ACR_URL/$ARTIFACT_NAME
             - export TAG=$BASE_VERSION.$BITBUCKET_BUILD_NUMBER
-
-            - cd base-image && make build-image
             - docker login --username $AZURE_CLIENT_ID --password $AZURE_SECRET $ACR_URL
             - cd ../config-reloader && make build-image IMAGE=$IMAGE TAG=$TAG VERSION=$TAG
             - docker push $IMAGE:$TAG
